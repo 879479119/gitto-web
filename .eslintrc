@@ -30,6 +30,7 @@
     }
   },
   "globals": {
-    "window": true
+    "window": true,
+    "__VERSION__": true
   }
 }

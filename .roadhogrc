@@ -10,7 +10,11 @@
     "production": {
       "extraBabelPlugins": [
         "transform-runtime"
-      ]
+      ],
+      "hash": true
     }
+  },
+  "define": {
+    "__VERSION__": 100
   }
 }
