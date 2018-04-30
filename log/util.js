@@ -1,5 +1,4 @@
-/**
- * @author rocksama
- * @created 2018/4/30
- * @description
- */
+
+module.exports = {
+  NGINX_TIME_FORMAT: 'DD/MMM/YYYY:HH:mm:ss',
+};

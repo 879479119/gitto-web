@@ -11,24 +11,27 @@ export default {
     app: null,
     version: null,
     platform: null,
-    testId: null,
-    paramsId: null,
+    tests: [],
+    params: {},
   },
 
   subscriptions: {
     setup({ dispatch, history }) {  // eslint-disable-line
       const args = parse(window.location.search.substr(1));
-      logger.init({
+      // 包含多次测试的信息
+      const tests = JSON.parse(args.testArray).detail;
+      const baseInfo = {
         app: +args.app,
         version: +args.version,
         platform: +args.platform,
-      }, {
-        testId: args.testId,
-        paramsId: args.paramsId,
-      });
+      };
+      logger.init(baseInfo, { tests });
+      const params = tests.reduce((prev, cur) => ({ ...prev, ...JSON.parse(cur.params) }), {});
       dispatch({
         type: 'saveStatus',
-        payload: args,
+        payload: {
+          ...baseInfo, tests, params,
+        },
       });
     },
   },

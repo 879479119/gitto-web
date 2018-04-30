@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Card, WingBlank, WhiteSpace, Button, Icon, List } from 'antd-mobile';
+import $Button from '../../ABcomponents/$Button';
 
-import logger from '../../utils/logMaster'
+import logger from '../../utils/logMaster';
 // import styles from './index.less';
 
 const Item = List.Item;
@@ -24,7 +25,7 @@ class UserRoot extends Component {
     });
   }
 
-  callHybrid = e => {
+  callHybrid = (e) => {
     // const str = typeof window.LogMaster.setLog
     //
     // const log = {
@@ -35,7 +36,7 @@ class UserRoot extends Component {
     //
     // window.LogMaster.setLog(JSON.stringify(log))
     //
-    // this.setState({blob: str})
+    this.setState({blob: '发送日志'})
     logger.trackClick(e);
 
     // window.BaseBridge.logMessage('2222')
@@ -89,7 +90,7 @@ class UserRoot extends Component {
     return (
       <div>
 
-        <Button onClick={this.callHybrid} id="clickItem">点击我调用{this.state.blob}</Button>
+        <$Button onClick={this.callHybrid} id="clickItem">点击我调用{this.state.blob}</$Button>
 
         <WingBlank size="lg">
           <WhiteSpace size="lg" />

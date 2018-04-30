@@ -21,6 +21,36 @@ class Util {
     }
     return -1;
   }
+  static getTypeMap(typeName, subTypeName) {
+    const typeMap = {
+      event: {
+        id: 1,
+        sub: {
+          clickItem: 2,
+          searchItem: 1,
+        },
+      },
+      view: {
+        id: 3,
+        sub: {
+          cardShow: 9,
+        },
+      },
+      error: {
+        id: 4,
+        sub: {
+          network: 13,
+          image: 17,
+          script: 15,
+        },
+      },
+    };
+
+    const type = typeMap[typeName].id;
+    const subType = typeMap[typeName].sub[subTypeName];
+
+    return { type, subType };
+  }
 }
 
 
@@ -76,10 +106,7 @@ class JSLogMaster {
   init(baseInfo, abInfo) {
     this.base = new Base(baseInfo);
     this.base.getVersionHash();
-    this.ab = {
-      testId: abInfo.testId,
-      paramsId: abInfo.paramsId,
-    };
+    this.ab = abInfo.tests;
   }
 
   log = (type, subType, msg) => {
@@ -88,21 +115,26 @@ class JSLogMaster {
     }
 
     if (!this.base) {
-      throw Error('埋点信息获取失败');
+      throw Error('null');
     }
 
     const post = {
-      base: this.base,
-      ab: this.ab,
-    }
+      base: { ...this.base, ...Util.getTypeMap(type, subType) },
+      abList: this.ab.map(t => ({
+        testId: t.testId,
+        paramsId: t.paramsId,
+      })),
+      detail: {},
+    };
 
-    post.detail[type][subType] = msg
+    post.detail[type] = {};
+    post.detail[type][subType] = msg;
 
     try {
       const json = JSON.stringify(post);
       this.logger.setLog(json);
     } catch (e) {
-      console.info('error');
+      console.error(e);
     }
   }
 
@@ -116,7 +148,6 @@ class JSLogMaster {
       y: event.clientY,
       path: Util.getDOMPath(event.currentTarget),
     };
-    console.info(post);
     this.log('event', 'clickItem', post);
   }
 
