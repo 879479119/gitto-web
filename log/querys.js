@@ -42,6 +42,9 @@ function formatValus(values) {
     if (typeof v === 'string') {
       return `"${v}"`;
     }
+    if (typeof v === 'boolean') {
+      return v;
+    }
     return `"${v.toString()}"`;
   }).join();
 }

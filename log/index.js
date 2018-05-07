@@ -5,48 +5,57 @@ const { masterConn, slaveConn } = require('./database');
 const { queryTypes, querySubTypes, insertLogInfo } = require('./querys');
 const typeUtil = require('./types/index.js');
 
-(async () => {
-  const types = await queryTypes();
-  const subTypes = await querySubTypes();
+try {
+  (async () => {
+    const types = await queryTypes();
+    const subTypes = await querySubTypes();
 
-  const rows = getDataRows();
+    const rows = getDataRows();
 
-  const store = Object.create(null);
-  rows.map((row) => {
-    // console.info(row)
+    const store = Object.create(null);
+    rows.map((row) => {
+      // console.info(row)
 
-    const { type, subType } = row.client.base;
-    const typeName = types.find(t => +t.id === +type).name.toLowerCase();
-    const subTypeName = subTypes.find(t => +t.id === +subType).name.toLowerCase();
-    if (!store[typeName]) {
-      store[typeName] = {};
+      const { type, subType } = row.client.base;
+      const typeName = types.find(t => +t.id === +type).name.toLowerCase();
+      const subTypeName = subTypes.find(t => +t.id === +subType).name.toLowerCase();
+      if (!store[typeName]) {
+        store[typeName] = {};
+      }
+      if (!store[typeName][subTypeName]) {
+        store[typeName][subTypeName] = { columns: [], values: [] };
+      }
+      const ref = store[typeName][subTypeName];
+      console.info(`${typeName}_${subTypeName}`);
+      const data = typeUtil[`${typeName}_${subTypeName}`](row);
+
+      ref.columns = data.columns;
+      ref.values.push(data.params);
+
+      return 0;
+    });
+
+    console.info('insert')
+
+    for (const lv1 in store) {
+      // noinspection JSUnfilteredForInLoop
+      for (const lv2 in store[lv1]) {
+        // console.info(store[lv1][lv2])
+        // noinspection JSUnfilteredForInLoop
+        insertLogInfo(`raw_${lv1}_${lv2}`, store[lv1][lv2].columns, store[lv1][lv2].values);
+      }
     }
-    if (!store[typeName][subTypeName]) {
-      store[typeName][subTypeName] = { columns: [], values: [] };
-    }
-    const ref = store[typeName][subTypeName];
-    const data = typeUtil.event_click(row);
 
-    ref.columns = data.columns;
-    ref.values.push(data.params);
+    // masterConn.disconnect();
+    // slaveConn.disconnect();
 
     return 0;
+  })().catch(e => {
+    console.info(e);
   });
-
-  for (const lv1 in store) {
-    // noinspection JSUnfilteredForInLoop
-    for (const lv2 in store[lv1]) {
-      // console.info(store[lv1][lv2])
-      // noinspection JSUnfilteredForInLoop
-      insertLogInfo(`raw_${lv1}_${lv2}`, store[lv1][lv2].columns, store[lv1][lv2].values);
-    }
-  }
-
-  // masterConn.disconnect();
-  // slaveConn.disconnect();
-
-  return 0;
-})();
+} catch (e) {
+  console.info(e);
+}
 
 /**
  * 获取每一行简单格式化后的数据
@@ -60,7 +69,7 @@ function getDataRows() {
   return lines.filter(Boolean).map((line) => {
     try {
       const columns = line.split(' - ');
-      const body = JSON.parse(decodeURIComponent(columns[2].match(/GET \/\?logs=(.*) HTTP\//)[1]));
+      const body = JSON.parse(decodeURIComponent(columns[2].match(/GET \/utm.gif\?logs=(.*) HTTP\//)[1]));
       const obj = {
         ip: columns[0],
         date: columns[1],

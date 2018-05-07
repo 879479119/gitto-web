@@ -1,5 +1,8 @@
 const moment = require('moment');
 const eventClick = require('./event_click');
+const spanView = require('./span_view');
+const viewPage = require('./view_page');
+const eventEnter = require('./event_enter');
 
 const columns = ['session_id', 'name', 'app', 'platform', 'version', 'client_time', 'url', 'ab_test', 'ab_params', 'ip', 'server_time', 'agent'];
 
@@ -14,8 +17,8 @@ function getBaseColumns(origin) {
     c.base.version,
     c.base.clientTime,
     c.base.url,
-    c.abList.map(t => t.testId).join(),
-    c.abList.map(t => t.paramsId).join(),
+    c.abList ? c.abList.map(t => t.testId).join() : null,
+    c.abList ? c.abList.map(t => t.paramsId).join() : null,
     s.ip,
     moment(s.date, 'DD/MMM/YYYY:HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
     s.agent,
@@ -26,6 +29,15 @@ function getBaseColumns(origin) {
 const ret = {
   event_click(origin) {
     return eventClick.transform(origin, columns, getBaseColumns(origin));
+  },
+  span_view(origin) {
+    return spanView.transform(origin, columns, getBaseColumns(origin));
+  },
+  view_page(origin) {
+    return viewPage.transform(origin, columns, getBaseColumns(origin));
+  },
+  event_enter(origin) {
+    return eventEnter.transform(origin, columns, getBaseColumns(origin));
   },
 };
 

@@ -17,9 +17,20 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {  // eslint-disable-line
-      const args = parse(window.location.search.substr(1));
-      // 包含多次测试的信息
-      const tests = JSON.parse(args.testArray).detail;
+      let args,
+        tests;
+      try {
+        args = parse(window.location.search.substr(1));
+        // 包含多次测试的信息
+        tests = JSON.parse(args.testArray).detail;
+      } catch (e) {
+        args = {
+          app: null,
+          version: null,
+          platform: null,
+        };
+        tests = [];
+      }
       const baseInfo = {
         app: +args.app,
         version: +args.version,

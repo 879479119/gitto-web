@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Card, WingBlank, WhiteSpace, PullToRefresh, Grid, Icon } from 'antd-mobile';
-// import styles from './index.less';
-//
+import { Card, WingBlank, WhiteSpace, PullToRefresh, Grid, Icon, List } from 'antd-mobile';
+import styles from './index.less';
+
+
+const Item = List.Item;
+
 class RepoRoot extends Component {
   state = {
     refreshing: false,
@@ -46,6 +49,33 @@ class RepoRoot extends Component {
       },
     ];
 
+    const baseTabs = [
+      {
+        text: <div className={styles.item}>
+          <p>Subscribe</p>
+          <p>{data.subscribers_count}</p>
+        </div>,
+      },
+      {
+        text: <div className={styles.item}>
+          <p>Forks</p>
+          <p>{data.forks_count}</p>
+        </div>,
+      },
+      {
+        text: <div className={styles.item}>
+          <p>Issues</p>
+          <p>{data.open_issues_count}</p>
+        </div>,
+      },
+      {
+        text: <div className={styles.item}>
+          <p>Stars</p>
+          <p>{data.stargazers_count}</p>
+        </div>,
+      },
+    ]
+
     // const data = Array.from(new Array(4)).map((_val, i) => ({
     //   icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
     //   text: `name${i}`,
@@ -53,6 +83,10 @@ class RepoRoot extends Component {
 
     return (
       <div>
+
+        <div className={styles.wrapper}>
+          <Grid data={baseTabs} columnNum={4} square={false} />
+        </div>
 
         <WingBlank size="lg">
           <WhiteSpace size="lg" />
@@ -76,9 +110,22 @@ class RepoRoot extends Component {
               extra={<span>{data.owner.type}</span>}
             />
             <Card.Body>
-              <div>This is content of `Card`</div>
+              <List>
+                <Item
+                  arrow="horizontal"
+                  extra={data.created_at}
+                >{'创建时间'}</Item>
+                <Item
+                  arrow="horizontal"
+                  extra={data.updated_at}
+                >{'更新时间'}</Item>
+                <Item
+                  arrow="horizontal"
+                  extra={data.pushed_at}
+                >{'push时间'}</Item>
+              </List>
             </Card.Body>
-            <Card.Footer content={data.pushed_at} extra={<div>{data.id}</div>} />
+            {/* <Card.Footer content={data.pushed_at} extra={<div>{data.id}</div>} />*/}
           </Card>
           <WhiteSpace size="lg" />
         </WingBlank>
@@ -100,7 +147,7 @@ class RepoRoot extends Component {
               title="README.md"
             />
             <Card.Body>
-              <div dangerouslySetInnerHTML={{__html: readme}} />
+              <div dangerouslySetInnerHTML={{ __html: readme }} />
             </Card.Body>
           </Card>
           <WhiteSpace size="lg" />
