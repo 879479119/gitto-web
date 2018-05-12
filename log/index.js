@@ -27,6 +27,9 @@ try {
       }
       const ref = store[typeName][subTypeName];
       console.info(`${typeName}_${subTypeName}`);
+      if (!typeUtil[`${typeName}_${subTypeName}`]) {
+        return 0;
+      }
       const data = typeUtil[`${typeName}_${subTypeName}`](row);
 
       ref.columns = data.columns;
@@ -35,13 +38,15 @@ try {
       return 0;
     });
 
-    console.info('insert')
 
     for (const lv1 in store) {
       // noinspection JSUnfilteredForInLoop
       for (const lv2 in store[lv1]) {
         // console.info(store[lv1][lv2])
         // noinspection JSUnfilteredForInLoop
+        if (lv1 === 'view') {
+          console.info(store[lv1][lv2].values);
+        }
         insertLogInfo(`raw_${lv1}_${lv2}`, store[lv1][lv2].columns, store[lv1][lv2].values);
       }
     }
@@ -69,7 +74,8 @@ function getDataRows() {
   return lines.filter(Boolean).map((line) => {
     try {
       const columns = line.split(' - ');
-      const body = JSON.parse(decodeURIComponent(columns[2].match(/GET \/utm.gif\?logs=(.*) HTTP\//)[1]));
+      console.info(decodeURIComponent(columns[2].match(/GET \/utm.gif\?logs=(.*) HTTP\/1\.1/)[1]))
+      const body = JSON.parse(decodeURIComponent(columns[2].match(/GET \/utm.gif\?logs=(.*) HTTP\/1\.1/)[1]));
       const obj = {
         ip: columns[0],
         date: columns[1],
@@ -83,6 +89,7 @@ function getDataRows() {
         client: body,
       };
     } catch (e) {
+      console.info(e)
       // 出现任何不合规的情况都是垃圾日志
       return null;
     }

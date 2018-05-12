@@ -1,3 +1,4 @@
+import moment from 'moment';
 
 class Util {
   static getDOMPath(target) {
@@ -70,8 +71,10 @@ class Base {
     this.app = init.app;
     this.platform = init.platform;
     this.version = init.version;
-    this.sessionId = init.sessionId;
-    this.name = init.name;
+    // this.sessionId = init.sessionId;
+    // this.name = init.name;
+    this.clientTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.url = window.location.href.replace(/\?.*/, '');
   }
 
   getVersionHash() {
@@ -122,7 +125,7 @@ class JSLogMaster {
       base: { ...this.base, ...Util.getTypeMap(type, subType) },
       abList: this.ab.map(t => ({
         testId: t.testId,
-        paramsId: t.paramsId,
+        paramId: t.paramsId,
       })),
       detail: {},
     };

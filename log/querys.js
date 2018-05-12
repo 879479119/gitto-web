@@ -20,9 +20,7 @@ module.exports = {
   },
 
   insertLogInfo(table, columns, values) {
-    console.info(values);
     return new Promise((resolve, reject) => {
-      console.info(`INSERT INTO ${table} (${columns.join()}) VALUES ${values.map(v => `( ${formatValus(v)} )`).join()}`)
       slaveConn.query(`INSERT INTO ${table} (${columns.join()}) VALUES ${values.map(v => `( ${formatValus(v)} )`).join()}`, (err, rows) => {
         if (err) reject(err);
         resolve(rows);

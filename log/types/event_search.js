@@ -1,19 +1,19 @@
 
 module.exports = {
-  columns: ['source_url', 'page_url'],
+  columns: ['type', 'text'],
   transform(origin, columns, params) {
-    const { detail: { view: { pageShow: d } } } = origin.client;
+    const { detail: { event: { searchItem: d } } } = origin.client;
     return {
       columns: columns.concat(this.columns),
       params: params.concat([
-        d.sourceUrl,
-        d.url,
+        d.type,
+        d.text,
       ]),
     };
   },
   getStoreInfo() {
     return {
-      table: 'raw_view_page',
+      table: 'raw_event_search',
     };
   },
 };

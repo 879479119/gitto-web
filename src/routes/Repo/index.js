@@ -105,7 +105,7 @@ class RepoRoot extends Component {
           <WhiteSpace size="lg" />
           <Card>
             <Card.Header
-              title={data.owner.login}
+              title={<a href={`/user/${data.owner.login}`}>{data.owner.login}</a>}
               thumb={<img width={40} height={40} src={data.owner.avatar_url} alt="" />}
               extra={<span>{data.owner.type}</span>}
             />
