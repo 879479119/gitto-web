@@ -12,3 +12,7 @@ export function queryReadme({ owner, repo }) {
     },
   });
 }
+
+export function queryDir({ owner, repo, path }) {
+  return request(`/repos/${owner}/${repo}/contents/${path}`);
+}

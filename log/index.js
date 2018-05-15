@@ -44,28 +44,25 @@ try {
       for (const lv2 in store[lv1]) {
         // console.info(store[lv1][lv2])
         // noinspection JSUnfilteredForInLoop
-        if (lv1 === 'view') {
-          console.info(store[lv1][lv2].values);
-        }
-        insertLogInfo(`raw_${lv1}_${lv2}`, store[lv1][lv2].columns, store[lv1][lv2].values);
+        await insertLogInfo(`raw_${lv1}_${lv2}`, store[lv1][lv2].columns, store[lv1][lv2].values);
       }
     }
 
     // masterConn.disconnect();
     // slaveConn.disconnect();
+    process.exit(0);
 
     return 0;
-  })().catch(e => {
+  })().catch((e) => {
     console.info(e);
+
+    process.exit(1);
   });
 } catch (e) {
   console.info(e);
 }
 
-/**
- * 获取每一行简单格式化后的数据
- * @return {{server: {ip: *|string, date: *|string, request: *|string, code: number, refer: string, agent: string}, client: any}[]}
- */
+
 function getDataRows() {
   const file = fs.readFileSync(path.resolve('../../access.log'), 'utf8');
 
@@ -74,7 +71,7 @@ function getDataRows() {
   return lines.filter(Boolean).map((line) => {
     try {
       const columns = line.split(' - ');
-      console.info(decodeURIComponent(columns[2].match(/GET \/utm.gif\?logs=(.*) HTTP\/1\.1/)[1]))
+      console.info(decodeURIComponent(columns[2].match(/GET \/utm.gif\?logs=(.*) HTTP\/1\.1/)[1]));
       const body = JSON.parse(decodeURIComponent(columns[2].match(/GET \/utm.gif\?logs=(.*) HTTP\/1\.1/)[1]));
       const obj = {
         ip: columns[0],
@@ -89,7 +86,7 @@ function getDataRows() {
         client: body,
       };
     } catch (e) {
-      console.info(e)
+      console.info(e);
       // 出现任何不合规的情况都是垃圾日志
       return null;
     }
